@@ -5,6 +5,9 @@ module WAEParser
   include RParsec
   extend RParsec::Parsers
   Id = regexp(/[a-z]/)
-  Num = integer.map{|x| x.to_i}
-  Reserved = Keywords.case_sensitive(%w{ with exit })
+  Num = number.token(:number)
+  Reserved = Keywords.case_sensitive(%w{with exit})
+  Ops = Operators.new(%w{+ - \{ \} ;})
+  Lexer = longer(Id.token(:id) , Reserved.lexer) | Num |  Ops.lexer
+  Lexeme = Lexer.lexeme << eof
 end
